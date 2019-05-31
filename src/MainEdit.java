@@ -1,4 +1,5 @@
 import utils.EditUtils;
+import utils.ProcDoc;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -30,9 +31,10 @@ public class MainEdit extends JTextPane implements DocumentListener {
   /**
    * 给关键字上色 todo 应当读取 当前行 与 上一行 作为参数
    *
+   * @param aboveLineOverBool 上一行是否有";" 结束
    * @param candidate
    */
-  void setKeyWordColor(String candidate) {
+  void setKeyWordColor(boolean aboveLineOverBool, String candidate) {
     String keyword;
     //todo 此处应判断 candidate 有无空格, 或分号 (保证关键字是有效的)
 
@@ -61,7 +63,7 @@ public class MainEdit extends JTextPane implements DocumentListener {
       }
 //      // 为关键字上色
 //      System.out.println(candidate + "  长度:" + candidate.length());
-      setKeyWordColor(candidate);
+//      setKeyWordColor(candidate);
     } else {
       // todo 当 粘贴/输入 的文本长度 > 最大关键字长度时
 
@@ -74,16 +76,24 @@ public class MainEdit extends JTextPane implements DocumentListener {
   @Override
   public void insertUpdate(DocumentEvent e) {
     currentCursor = e.getOffset() + e.getLength();
-    procInput(e.getDocument(), e.getOffset(), e.getLength());
+
+    ProcDoc.procDocInsert(e.getDocument(), currentCursor, e.getOffset(), e.getLength());
+//    procInput(e.getDocument(), e.getOffset(), e.getLength());
+
+    System.out.print("当前光标:" + currentCursor);
+    System.out.printf("输入事件: 起点:%s, 长度:%s, 文档起始位置:%s, 文档结束位置:%s, 文档总长:%s\n", e.getOffset(), e.getLength(), e.getDocument().getStartPosition(), e.getDocument().getEndPosition(), e.getDocument().getLength()); // 输入更新事件
   }
 
   @Override
   public void removeUpdate(DocumentEvent e) {
+    currentCursor = e.getOffset();
 
+    System.out.print("当前光标:" + currentCursor);
+    System.out.printf("删除事件: 起点:%s, 长度:%s, 文档起始位置:%s, 文档结束位置:%s, 文档总长:%s\n", e.getOffset(), e.getLength(), e.getDocument().getStartPosition(), e.getDocument().getEndPosition(), e.getDocument().getLength()); // 输入更新事件
   }
 
   @Override
   public void changedUpdate(DocumentEvent e) {
-
+    // 没什么用
   }
 }
