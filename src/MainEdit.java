@@ -1,5 +1,4 @@
 import utils.EditUtils;
-import utils.ProcDoc;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -13,10 +12,11 @@ import java.awt.*;
  * @Date: 2019/5/29
  */
 public class MainEdit extends JTextPane implements DocumentListener {
+  private ProcDoc procDoc = new ProcDoc();
   private int currentCursor;
 
+
   MainEdit() {
-//    this.
     this.setFont(new Font("宋体", Font.PLAIN, 16));
     this.setCaretColor(Color.WHITE);  //光标色
     this.setBackground(new Color(43, 43, 43));  // 背景色
@@ -29,10 +29,10 @@ public class MainEdit extends JTextPane implements DocumentListener {
   }
 
   /**
-   * 给关键字上色 todo 应当读取 当前行 与 上一行 作为参数
+   * 给关键字上色
    *
    * @param aboveLineOverBool 上一行是否有";" 结束
-   * @param candidate
+   * @param candidate 可能包含 关键字 的字符串
    */
   void setKeyWordColor(boolean aboveLineOverBool, String candidate) {
     String keyword;
@@ -77,7 +77,7 @@ public class MainEdit extends JTextPane implements DocumentListener {
   public void insertUpdate(DocumentEvent e) {
     currentCursor = e.getOffset() + e.getLength();
 
-    ProcDoc.procDocInsert(e.getDocument(), currentCursor, e.getOffset(), e.getLength());
+    procDoc.procDocInsert(e.getDocument(), currentCursor, e.getOffset(), e.getLength());
 //    procInput(e.getDocument(), e.getOffset(), e.getLength());
 
     System.out.print("当前光标:" + currentCursor);
@@ -88,6 +88,7 @@ public class MainEdit extends JTextPane implements DocumentListener {
   public void removeUpdate(DocumentEvent e) {
     currentCursor = e.getOffset();
 
+    procDoc.procDocRemove(e.getDocument(), currentCursor, e.getOffset(), e.getLength());
     System.out.print("当前光标:" + currentCursor);
     System.out.printf("删除事件: 起点:%s, 长度:%s, 文档起始位置:%s, 文档结束位置:%s, 文档总长:%s\n", e.getOffset(), e.getLength(), e.getDocument().getStartPosition(), e.getDocument().getEndPosition(), e.getDocument().getLength()); // 输入更新事件
   }
