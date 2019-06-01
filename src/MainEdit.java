@@ -1,10 +1,7 @@
-import utils.EditUtils;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.text.DefaultStyledDocument;
 import java.awt.*;
 
 /**
@@ -14,7 +11,6 @@ import java.awt.*;
 public class MainEdit extends JTextPane implements DocumentListener {
   private ProcDoc procDoc = new ProcDoc();
   private int currentCursor;
-
 
   MainEdit() {
     this.setFont(new Font("宋体", Font.PLAIN, 16));
@@ -26,53 +22,49 @@ public class MainEdit extends JTextPane implements DocumentListener {
     this.setSelectedTextColor(Color.gray);  // 被选中字体的 字体色
 
     this.getDocument().addDocumentListener(this);
+
+    this.setStyledDocument(new DefaultStyledDocument());  // 设置风格...
   }
 
-  /**
-   * 给关键字上色
-   *
-   * @param aboveLineOverBool 上一行是否有";" 结束
-   * @param candidate 可能包含 关键字 的字符串
-   */
-  void setKeyWordColor(boolean aboveLineOverBool, String candidate) {
-    String keyword;
-    //todo 此处应判断 candidate 有无空格, 或分号 (保证关键字是有效的)
+//  /**
+//   * 给关键字上色
+//   *
+//   * @param aboveLineOverBool 上一行是否有";" 结束
+//   * @param candidate 可能包含 关键字 的字符串
+//   */
+//  void setKeyWordColor(boolean aboveLineOverBool, String candidate) {
+//    String keyword;
+//
+//    if (candidate == null || (keyword = EditUtils.getKeyWord(candidate)) == null) {
+//      return;
+//    }
+//    System.out.println(keyword);
+//  }
 
-    if (candidate == null || (keyword = EditUtils.getKeyWord(candidate)) == null) {
-      return;
-    }
+//  void procInput(Document doc, int offset, int inputLength) {
+//    if (inputLength <= EditUtils.MAX_KEY_LENGTH) {  // 当 粘贴/输入 的文本长度 < 最大关键字长度时
+//      int start = (currentCursor) - EditUtils.MAX_KEY_LENGTH;
+//      int length = EditUtils.MAX_KEY_LENGTH;
+//      if (start < 0) {
+//        length = currentCursor;
+//        start = 0;
+//      }
+//
+//      String candidate = null;
+//      try {
+//        candidate = doc.getText(start, length);
+//      } catch (BadLocationException e1) {
+//        System.out.println("开始: " + start + " 当前光标: " + currentCursor);
+//        e1.printStackTrace();
+//      }
+////      // 为关键字上色
+////      System.out.println(candidate + "  长度:" + candidate.length());
+////      setKeyWordColor(candidate);
+//    } else {
+//
+//    }
+//  }
 
-    System.out.println(keyword);
-  }
-
-  void procInput(Document doc, int offset, int inputLength) {
-    if (inputLength <= EditUtils.MAX_KEY_LENGTH) {  // 当 粘贴/输入 的文本长度 <= 最大关键字长度时
-      int start = (currentCursor) - EditUtils.MAX_KEY_LENGTH;
-      int length = EditUtils.MAX_KEY_LENGTH;
-      if (start < 0) {
-        length = currentCursor;
-        start = 0;
-      }
-
-      String candidate = null;
-      try {
-        candidate = doc.getText(start, length);
-      } catch (BadLocationException e1) {
-        System.out.println("开始: " + start + " 当前光标: " + currentCursor);
-        e1.printStackTrace();
-      }
-//      // 为关键字上色
-//      System.out.println(candidate + "  长度:" + candidate.length());
-//      setKeyWordColor(candidate);
-    } else {
-      // todo 当 粘贴/输入 的文本长度 > 最大关键字长度时
-
-    }
-  }
-
-  /**
-   * todo 未来应当考虑用定时刷新取代监听器, 因为监听器很难处理一次性粘贴进大量文本的事件
-   */
   @Override
   public void insertUpdate(DocumentEvent e) {
     currentCursor = e.getOffset() + e.getLength();
@@ -95,6 +87,6 @@ public class MainEdit extends JTextPane implements DocumentListener {
 
   @Override
   public void changedUpdate(DocumentEvent e) {
-    // 没什么用
+    System.out.println("在文本的属性(颜色,字体等)改变时被调用");
   }
 }
