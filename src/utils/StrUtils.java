@@ -10,7 +10,7 @@ import javax.swing.text.Document;
  */
 public class StrUtils {
   static final String[] KEYWORD = ("abstract_class_extends_implements_null_strictfp_true_assert_const_false_import_package_super_try_boolean_continue_final_instanceof_private_switch_void_break_default_finally_int_protected_synchronized_volatile_byte_do_float_interface_public_this_while_case_double_for_long_String_return_throw_catch_else_goto_native_short_throws_char_enum_if_new_static_transient").split("_");
-  static final char[] KEY_CHAR = ("+-/* ><=!^|&".toCharArray());
+  static final char[] KEY_CHAR = ("+-/* ><=!^|&}{".toCharArray());
   public static final int MAX_KEY_LENGTH = 12;  // 空格+最长关键字长度
 
   /**
@@ -41,12 +41,37 @@ public class StrUtils {
    * @return 返回左侧第一个 非单词字符 相对于 doc起点 的 偏移量
    */
   public static int searchLeft(Document doc, int location) {
-    for (; location > 0 && !isNotVariateChar(doc, location); location--) ;
+//    while (location > 0 && !isKeyChar(doc, --location)) ;
+    while (location > 0 ){
+      if(!isKeyChar(doc, location-1)){
+        location--;
+        continue;
+      }
+      return location;
+    }
     return location;
   }
+
   public static int searchRight(Document doc, int location) {
-    for (; location < doc.getLength() && !isNotVariateChar(doc, location); location++) ;
+//    while (location < doc.getLength() && !isKeyChar(doc, location++)) ;
+    while (location  < doc.getLength()){
+      if(!isKeyChar(doc, location+1)){
+        location++;
+        continue;
+      }
+      return location;
+    }
     return location;
+  }
+
+  /**
+   * @param doc
+   * @param location currentCursor
+   * @return
+   */
+  public static int[] searchSection(Document doc, int location) {
+    System.out.printf("当前指针: %s", location);  //todo
+    return new int[]{searchLeft(doc, location), searchRight(doc, location)};
   }
 
 
@@ -56,21 +81,38 @@ public class StrUtils {
    *
    * @return 如果是 空格, +-* ><=!^|&" 返回 true
    */
-  private static boolean isNotVariateChar(Document doc, int location) {
+  private static boolean isKeyChar(Document doc, int location) {
     try {
-      return isNotVariateChar((doc.getText(location, 1)).toCharArray()[0]);
+      return isKeyChar((doc.getText(location, 1)).toCharArray()[0]);
     } catch (BadLocationException e) {
       e.printStackTrace();
+      System.err.println("出现错误!!");
     }
-    System.err.println("出现错误!!");
     return false;
   }
 
-  private static boolean isNotVariateChar(char ch) {
+  private static boolean isKeyChar(char ch) {
     for (char c : KEY_CHAR) {
       if (ch == c)
         return true;
     }
     return false;
+  }
+
+  /**
+   * 检查 传输的字符串里有没有包含 java 关键字, 如果有, 则返回关键字长度, 否则返回 -1
+   *
+   * @param candidate 可能包含关键字的串 (注意: 需要先保证该串的关键字的前面有空格或 分号
+   * @return 关键字
+   */
+  public static int getKeywordLength(String candidate) {
+//    if(candidate.startsWith(" "))
+//      candidate = candidate.substring(1);
+    for (int i = 0; i < KEYWORD.length; i++) {
+      if (candidate.equals(KEYWORD[i])) {
+        return KEYWORD[i].length();
+      }
+    }
+    return -1;
   }
 }

@@ -4,6 +4,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.TabSet;
 import java.awt.*;
 
 /**
@@ -19,7 +20,7 @@ public class MainEdit extends JTextPane implements DocumentListener {
   private static final Color COLOR_BG_DARK = new Color(43, 43, 43);
   private static final Color COLOR_SELECTION = new Color(33, 66, 131);
   private static final Color COLOR_FG_KEYWORD_DARK = new Color(204, 120, 50);
-  private static final Color COLOR_FG_NORMAL_DARK = Color.WHITE;
+  private static final Color COLOR_FG_NORMAL_DARK = new Color(169, 183, 198);
 
 
   MainEdit() {
@@ -40,7 +41,6 @@ public class MainEdit extends JTextPane implements DocumentListener {
 
     procDoc =  new ProcDoc(normalStyle, keywordStyle);
   }
-
 
   @Override
   public void insertUpdate(DocumentEvent e) {
@@ -63,6 +63,6 @@ public class MainEdit extends JTextPane implements DocumentListener {
 
   @Override
   public void changedUpdate(DocumentEvent e) {
-    System.out.println("在文本的属性(颜色,字体等)改变时被调用");
+    System.out.println("<<<在文本的属性(颜色,字体等)改变时被调用>>>");
   }
 }
